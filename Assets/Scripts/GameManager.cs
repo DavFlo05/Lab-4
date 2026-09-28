@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public GameObject bigMeteorPrefab;
 
     public bool gameOver = false;
+
     public int meteorCount = 0;
 
     void Start()
@@ -30,10 +31,21 @@ public class GameManager : MonoBehaviour
             BigMeteor();
         }
     }
-
     public void OnRestart(InputValue value)
     {
-        if (value.isPressed && gameOver)
+        if (value.isPressed)
+        {
+            GameManager gameManager = FindFirstObjectByType<GameManager>();
+
+            if (gameManager != null)
+            {
+                gameManager.RestartGame();
+            }
+        }
+    }
+    public void RestartGame()
+    {
+        if (gameOver)
         {
             SceneManager.LoadScene("Week5Lab");
         }
