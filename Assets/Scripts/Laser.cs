@@ -1,23 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private float speed = 8f;
+    [SerializeField] private float destroyPositionY = 11f;
 
-    // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.up * Time.deltaTime * 8f);
+        Move();
 
-        if (transform.position.y > 11f)
+        if (transform.position.y > destroyPositionY)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
+    }
+
+    private void Move()
+    {
+        transform.Translate(Vector3.up * speed * Time.deltaTime);
     }
 }

@@ -4,69 +4,84 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject playerPrefab;
-    public GameObject meteorPrefab;
-    public GameObject bigMeteorPrefab;
-
-    public bool gameOver = false;
-
-    public int meteorCount = 0;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject meteorPrefab;
+    [SerializeField] private GameObject bigMeteorPrefab;
+    [Header("Meteor Spawning")]
+    [SerializeField] private float spawnDelay = 1f;
+    [SerializeField] private float spawnRate = 2f;
+    [SerializeField] private int meteorsForBigMeteor = 5;
+    private int meteorCount = 0;
+    private bool gameOver = false;
 
     void Start()
     {
-        Instantiate(playerPrefab, transform.position, Quaternion.identity);
+        Instantiate(
+            playerPrefab,
+            transform.position,
+            Quaternion.identity
+        );
 
-        InvokeRepeating("SpawnMeteor", 1f, 2f);
+        InvokeRepeating(
+            nameof(SpawnMeteor),
+            spawnDelay,
+            spawnRate
+        );
     }
-
-    void Update()
+    public void MeteorDestroyed()
     {
-        if (gameOver)
-        {
-            CancelInvoke();
-        }
+        meteorCount++;
 
-        if (meteorCount == 5)
+        if (meteorCount >= meteorsForBigMeteor)
         {
-            BigMeteor();
+            SpawnBigMeteor();
+
+            meteorCount = 0;
         }
     }
+    public void GameOver()
+    {
+        gameOver = true;
+
+        CancelInvoke(nameof(SpawnMeteor));
+    }
+
     public void OnRestart(InputValue value)
     {
-        if (value.isPressed)
+        if (value.isPressed && gameOver)
         {
-            GameManager gameManager = FindFirstObjectByType<GameManager>();
-
-            if (gameManager != null)
-            {
-                gameManager.RestartGame();
-            }
-        }
-    }
-    public void RestartGame()
-    {
-        if (gameOver)
-        {
-            SceneManager.LoadScene("Week5Lab");
+            SceneManager.LoadScene(
+                SceneManager.GetActiveScene().name
+            );
         }
     }
 
-    void SpawnMeteor()
+    private void SpawnMeteor()
     {
+        Vector3 spawnPosition = new Vector3(
+            Random.Range(-8f, 8f),
+            7.5f,
+            0f
+        );
+
         Instantiate(
             meteorPrefab,
-            new Vector3(Random.Range(-8, 8), 7.5f, 0),
+            spawnPosition,
             Quaternion.identity
         );
     }
-
-    void BigMeteor()
+    private void SpawnBigMeteor()
     {
-        meteorCount = 0;
+        Vector3 spawnPosition = new Vector3(
+            Random.Range(-8f, 8f),
+            7.5f,
+            0f
+        );
 
         Instantiate(
             bigMeteorPrefab,
-            new Vector3(Random.Range(-8, 8), 7.5f, 0),
+            spawnPosition,
             Quaternion.identity
         );
     }

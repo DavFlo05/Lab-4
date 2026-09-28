@@ -31,19 +31,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnRestart(InputValue value)
-    {
-        if (value.isPressed)
-        {
-            GameManager gameManager = FindFirstObjectByType<GameManager>();
-
-            if (gameManager != null)
-            {
-                gameManager.RestartGame();
-            }
-        }
-    }
-
     void Movement()
     {
         Vector3 movement = new Vector3(moveInput.x, moveInput.y, 0);
@@ -80,6 +67,7 @@ public class Player : MonoBehaviour
         );
 
         canShoot = false;
+
         StartCoroutine(Cooldown());
     }
 

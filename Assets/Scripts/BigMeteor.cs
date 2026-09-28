@@ -1,44 +1,59 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BigMeteor : MonoBehaviour
 {
+    [SerializeField] private float speed = 0.5f;
+    [SerializeField] private float destroyPositionY = -11f;
+    [SerializeField] private int hitsToDestroy = 5;
+
     private int hitCount = 0;
 
-    // Start is called before the first frame update
+    private GameManager gameManager;
+
     void Start()
     {
-        
+        gameManager = FindFirstObjectByType<GameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.down * Time.deltaTime * 0.5f);
+        Move();
 
-        if (transform.position.y < -11f)
+        if (transform.position.y < destroyPositionY)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
+    }
 
-        if (hitCount >= 5)
-        {
-            Destroy(this.gameObject);
-        }
+    private void Move()
+    {
+        transform.Translate(Vector3.down * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D whatIHit)
     {
-        if (whatIHit.tag == "Player")
+        if (whatIHit.CompareTag("Player"))
         {
-            GameObject.Find("GameManager").GetComponent<GameManager>().gameOver = true;
+            gameManager.GameOver();
+
+            Destroy(whatIHit.gameObject);
+            Destroy(gameObject);
+        }
+        else if (whatIHit.CompareTag("Laser"))
+        {
+            TakeHit();
+
             Destroy(whatIHit.gameObject);
         }
-        else if (whatIHit.tag == "Laser")
+    }
+
+    private void TakeHit()
+    {
+        hitCount++;
+
+        if (hitCount >= hitsToDestroy)
         {
-            hitCount++;
-            Destroy(whatIHit.gameObject);
+            Destroy(gameObject);
         }
     }
 }

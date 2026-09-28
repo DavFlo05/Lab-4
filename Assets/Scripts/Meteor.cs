@@ -1,39 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Meteor : MonoBehaviour
 {
-    
-    // Start is called before the first frame update
+    [SerializeField] private float speed = 2f;
+    [SerializeField] private float destroyPositionY = -11f;
+
+    private GameManager gameManager;
+
     void Start()
     {
-        
+        gameManager = FindFirstObjectByType<GameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.down * Time.deltaTime * 2f);
+        Move();
 
-        if (transform.position.y < -11f)
+        if (transform.position.y < destroyPositionY)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
+    }
+
+    private void Move()
+    {
+        transform.Translate(Vector3.down * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D whatIHit)
     {
-        if (whatIHit.tag == "Player")
+        if (whatIHit.CompareTag("Player"))
         {
-            GameObject.Find("GameManager").GetComponent<GameManager>().gameOver = true;
+            gameManager.GameOver();
+
             Destroy(whatIHit.gameObject);
-            Destroy(this.gameObject);
-        } else if (whatIHit.tag == "Laser")
+            Destroy(gameObject);
+        }
+        else if (whatIHit.CompareTag("Laser"))
         {
-            GameObject.Find("GameManager").GetComponent<GameManager>().meteorCount++;
+            gameManager.MeteorDestroyed();
+
             Destroy(whatIHit.gameObject);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 }
