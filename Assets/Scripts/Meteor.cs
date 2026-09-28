@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class Meteor : MonoBehaviour
 {
@@ -6,10 +7,14 @@ public class Meteor : MonoBehaviour
     [SerializeField] private float destroyPositionY = -11f;
 
     private GameManager gameManager;
+    private CinemachineImpulseSource impulseSource;
 
     void Start()
     {
         gameManager = FindFirstObjectByType<GameManager>();
+
+        impulseSource =
+            GetComponent<CinemachineImpulseSource>();
     }
 
     void Update()
@@ -24,7 +29,9 @@ public class Meteor : MonoBehaviour
 
     private void Move()
     {
-        transform.Translate(Vector3.down * speed * Time.deltaTime);
+        transform.Translate(
+            Vector3.down * speed * Time.deltaTime
+        );
     }
 
     private void OnTriggerEnter2D(Collider2D whatIHit)
@@ -39,6 +46,11 @@ public class Meteor : MonoBehaviour
         else if (whatIHit.CompareTag("Laser"))
         {
             gameManager.MeteorDestroyed();
+
+            if (impulseSource != null)
+            {
+                impulseSource.GenerateImpulse();
+            }
 
             Destroy(whatIHit.gameObject);
             Destroy(gameObject);
