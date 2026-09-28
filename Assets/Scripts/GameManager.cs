@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Unity.Cinemachine;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,20 +9,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject meteorPrefab;
     [SerializeField] private GameObject bigMeteorPrefab;
+
+    [Header("Camera")]
+    [SerializeField] private CinemachineCamera cinemachineCamera;
+
     [Header("Meteor Spawning")]
     [SerializeField] private float spawnDelay = 1f;
     [SerializeField] private float spawnRate = 2f;
     [SerializeField] private int meteorsForBigMeteor = 5;
+
     private int meteorCount = 0;
     private bool gameOver = false;
 
     void Start()
     {
-        Instantiate(
+        GameObject player = Instantiate(
             playerPrefab,
             transform.position,
             Quaternion.identity
         );
+
+        cinemachineCamera.Follow = player.transform;
 
         InvokeRepeating(
             nameof(SpawnMeteor),
@@ -29,6 +37,7 @@ public class GameManager : MonoBehaviour
             spawnRate
         );
     }
+
     public void MeteorDestroyed()
     {
         meteorCount++;
@@ -36,14 +45,13 @@ public class GameManager : MonoBehaviour
         if (meteorCount >= meteorsForBigMeteor)
         {
             SpawnBigMeteor();
-
             meteorCount = 0;
         }
     }
+
     public void GameOver()
     {
         gameOver = true;
-
         CancelInvoke(nameof(SpawnMeteor));
     }
 
@@ -71,6 +79,7 @@ public class GameManager : MonoBehaviour
             Quaternion.identity
         );
     }
+
     private void SpawnBigMeteor()
     {
         Vector3 spawnPosition = new Vector3(

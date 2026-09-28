@@ -7,8 +7,6 @@ public class Player : MonoBehaviour
     public GameObject laserPrefab;
 
     private float speed = 6f;
-    private float horizontalScreenLimit = 10f;
-    private float verticalScreenLimit = 6f;
     private bool canShoot = true;
 
     private Vector2 moveInput;
@@ -33,29 +31,15 @@ public class Player : MonoBehaviour
 
     void Movement()
     {
-        Vector3 movement = new Vector3(moveInput.x, moveInput.y, 0);
+        Vector3 movement = new Vector3(
+            moveInput.x,
+            moveInput.y,
+            0
+        );
 
-        transform.Translate(movement * speed * Time.deltaTime);
-
-        if (transform.position.x > horizontalScreenLimit ||
-            transform.position.x <= -horizontalScreenLimit)
-        {
-            transform.position = new Vector3(
-                transform.position.x * -1f,
-                transform.position.y,
-                0
-            );
-        }
-
-        if (transform.position.y > verticalScreenLimit ||
-            transform.position.y <= -verticalScreenLimit)
-        {
-            transform.position = new Vector3(
-                transform.position.x,
-                transform.position.y * -1f,
-                0
-            );
-        }
+        transform.Translate(
+            movement * speed * Time.deltaTime
+        );
     }
 
     void Shooting()
